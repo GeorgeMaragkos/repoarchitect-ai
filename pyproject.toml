@@ -1,0 +1,17 @@
+[project]
+name = "repoarchitect-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "George Maragkos", email = "george1998mara@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+repoarchitect-ai = "repoarchitect_ai:main"
+
+[build-system]
+requires = ["uv_build>=0.9.28,<0.10.0"]
+build-backend = "uv_build"
