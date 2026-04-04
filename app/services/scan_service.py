@@ -72,6 +72,56 @@ def scan_project_structure(project_path: Path) -> dict:
     if controller_dbcontext_violation:
         architecture_warnings.append("Controllers may access DbContext directly")
 
+    architecture_score = 10
+
+    if not detected_folders["Services"]:
+        architecture_score -= 2
+
+    if not detected_folders["Repositories"]:
+        architecture_score -= 1
+
+    if not uses_dependency_injection:
+        architecture_score -= 2
+
+    if not uses_ef_core:
+        architecture_score -= 1
+
+    if controller_dbcontext_violation:
+        architecture_score -= 2
+
+    architecture_score = max(0, architecture_score)
+
+    strengths = []
+
+    if uses_dependency_injection:
+        strengths.append("Dependency Injection configured")
+
+    if detected_folders["Controllers"]:
+        strengths.append("Controllers layer present")
+
+    if uses_ef_core:
+        strengths.append("Entity Framework usage detected")
+
+    if not controller_dbcontext_violation:
+        strengths.append("Controllers appear clean (no direct DbContext usage)")
+
+    issues = []
+
+    if not detected_folders["Services"]:
+        issues.append("Missing service layer")
+
+    if not detected_folders["Repositories"]:
+        issues.append("Missing repository layer")
+
+    if not uses_dependency_injection:
+        issues.append("Dependency Injection not detected")
+
+    if not uses_ef_core:
+        issues.append("Entity Framework not detected")
+
+    if controller_dbcontext_violation:
+        issues.append("Controllers may access DbContext directly")
+
     return {
         "project_path": str(project_path),
         "file_count": file_count,
@@ -82,5 +132,8 @@ def scan_project_structure(project_path: Path) -> dict:
         "uses_dependency_injection": uses_dependency_injection,
         "uses_ef_core": uses_ef_core,
         "controller_dbcontext_violation": controller_dbcontext_violation,
-        "architecture_warnings": architecture_warnings
+        "architecture_warnings": architecture_warnings,
+        "architecture_score": architecture_score,
+        "strengths": strengths,
+        "issues": issues
     }
